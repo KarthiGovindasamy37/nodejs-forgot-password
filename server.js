@@ -118,11 +118,11 @@ app.post("/reset",async(req,res)=>{
                 res.json({message:"Please change your password immediately"})
             }else{
 
-                res.json({message:"email or password not matched"})
+                res.status(406).json.status(406)({message:"email or password not matched"})
             }
         }else{
             
-            res.json({message:"email or password not matched"})
+            res.status(406).json({message:"email or password not matched"})
         }
 } catch (error) {
         res.status(500).json({message:"Something went wrong,try again"})
