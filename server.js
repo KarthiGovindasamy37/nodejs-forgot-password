@@ -52,7 +52,24 @@ let sendEmail=async(mail,res,PASS,temp,USER)=>{
     }
 }
     
-app.post("/userlogin",async(req,res)=>{
+app.post("/createUser",async(req,res)=>{
+    try {
+        let connection=await mongoclient.connect(URL);
+
+        let db=connection.db(DB);
+
+        let user=await db.collection("users").findOne({email:req.body.email});
+
+        if(!user){
+            await db.collection("users").insertOne(req.body)
+
+            res.json({message:"Account created test my work"})
+        }else{
+            res.status(409).json({message:"Email id already exists"})
+        }
+    } catch (error) {
+        res.status(500).json({message:"Something went wrong,try again"})
+    }
 
 })
 
