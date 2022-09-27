@@ -38,7 +38,7 @@ let sendEmail=async(mail,res,PASS,temp,USER)=>{
             to:mail,
             subject:"Reset password link from EPIC.io",
             text:"Please click the link below to reset your password",
-            html:`<p>Your temporary password is <b>${temp}</b></p>
+            html:`<p>Your temporary password is-<b>${temp}</b></p>
                   <p>Copy the temporary password and submit it by clicking the 
                   temporary password link in the forgot password page</p>`
             // `<h5>Please click the link below to reset your password </h5>
@@ -100,7 +100,7 @@ app.post("/reset",async(req,res)=>{
                 
                 res.json({message:"Please change your password immediately"})
             }else{
-                
+
                 res.json({message:"email or password not matched"})
             }
         }else{
