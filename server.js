@@ -7,6 +7,7 @@ const dotenv=require("dotenv").config()
 const jwt=require("jsonwebtoken")
 const nodemailer=require("nodemailer")
 const random=require("randomstring")
+const bcrypt = require("bcryptjs")
 
 let URL=process.env.URL
 let DB=process.env.DB
@@ -16,9 +17,7 @@ let PASS=process.env.PASS
 let USER=process.env.USER
 
 app.use(express.json())
-app.use(cors({
-    origin:"http://localhost:3000"
-}))
+app.use(cors())
 
 let sendEmail=async(mail,res,PASS,temp,USER)=>{
     try {
@@ -61,6 +60,12 @@ app.post("/createUser",async(req,res)=>{
         let user=await db.collection("users").findOne({email:req.body.email});
 
         if(!user){
+            let salt = await bcrypt.genSalt(10)
+
+            let hash = bcrypt.hash(req.body.password,salt)
+
+            req.body.password = hash
+
             await db.collection("users").insertOne(req.body)
 
             res.json({message:"Account created test my work"})
@@ -99,7 +104,7 @@ app.post("/forgot",async(req,res)=>{
     }
 })
 
-app.post("/reset",async(req,res)=>{
+app.post("/temporary",async(req,res)=>{
     let pass=req.body.password
     let mail=req.body.email
    
@@ -125,6 +130,31 @@ app.post("/reset",async(req,res)=>{
             res.status(406).json({message:"email or password not matched"})
         }
 } catch (error) {
+        res.status(500).json({message:"Something went wrong,try again"})
+    }
+})
+
+app.post("/resetPass",async(req,res) =>{
+    try {
+        let connection = await mongoclient.connect(URL)
+
+        let db = connection.db(DB)
+
+        let user = await db.collection("users").findOne({email:req.body.email})
+        if(user){
+            let salt = await bcrypt.genSalt(10)
+
+            let hash = await bcrypt.hash(req.body.password,salt)
+
+            req.body.password = hash
+
+            await db.collection("users").findOneAndUpdate({email:req.body.email},{$set:{password:req.body.password}})
+
+            res.json({message:"Password updated successfully"})
+        }else{
+            res.status(400).json({message:"Email id is incorrect"})
+        }
+    } catch (error) {
         res.status(500).json({message:"Something went wrong,try again"})
     }
 })
