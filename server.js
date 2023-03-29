@@ -123,7 +123,7 @@ app.post("/temporary",async(req,res)=>{
                 res.json({message:"Please change your password immediately"})
             }else{
 
-                res.status(406).json.status(406)({message:"email or password not matched"})
+                res.status(406).json({message:"email or password not matched"})
             }
         }else{
             
