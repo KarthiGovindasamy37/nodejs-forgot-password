@@ -79,7 +79,6 @@ app.post("/createUser",async(req,res)=>{
 })
 
 app.post("/forgot",async(req,res)=>{
-    console.log("comes")
     try {
         let connection=await mongoclient.connect(URL);
 
